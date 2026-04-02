@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orb — Visual Programming Language</title>
+    <meta name="description" content="A visual programming language where programs are circuit schematics. Write code, watch data flow through wires.">
+    <meta property="og:title" content="Orb — Visual Programming Language">
+    <meta property="og:description" content="Programs are circuit schematics. Modules are components. Wires carry data. Inline assembly shares variables with high-level code.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◉</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+        body { background: #080c14; }
+        #loading {
+            position: fixed; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 20px;
+            background: #080c14; color: #60a5fa;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        #loading.done { opacity: 0; pointer-events: none; }
+        #loading .mark { font-size: 32px; font-weight: 800; letter-spacing: 4px; }
+        #loading .spin {
+            width: 20px; height: 20px;
+            border: 2px solid #1e293b;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: r 0.7s linear infinite;
+        }
+        #loading .note { font-size: 11px; color: #334155; }
+        @keyframes r { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="mark">ORB</div>
+        <div class="spin"></div>
+        <div class="note">loading interpreter</div>
+    </div>
+    <div id="root"></div>
+
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+    <script type="text/babel" src="orb_ide.jsx"></script>
+    <script type="text/babel">
+        // Mount the IDE once Babel has processed the JSX
+        window.addEventListener('DOMContentLoaded', function() {
+            function mount() {
+                if (typeof OrbIDE === 'function') {
+                    ReactDOM.createRoot(document.getElementById('root'))
+                        .render(React.createElement(OrbIDE));
+                    var el = document.getElementById('loading');
+                    if (el) {
+                        el.classList.add('done');
+                        setTimeout(function() { el.remove(); }, 600);
+                    }
+                } else {
+                    setTimeout(mount, 100);
+                }
+            }
+            mount();
+        });
+    </script>
+</body>
+</html>
